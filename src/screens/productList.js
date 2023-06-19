@@ -1,10 +1,19 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {FlatList, Text, View, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import {useQuery} from '@apollo/client';
 import {PRODUCT_QUERY} from '../server/query';
 
 function ProductList({navigation}) {
-  const {data, loading, error} = useQuery(PRODUCT_QUERY);
+  const {data, loading, error, refetch} = useQuery(PRODUCT_QUERY);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      refetch()
+    });
+
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return unsubscribe;
+  }, [navigation]);
 
   if (loading) {
     return (
