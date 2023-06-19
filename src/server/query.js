@@ -28,13 +28,26 @@ export const VIEW_PRODUCT = gql`
 
 export const ADD_PRODUCT = gql`
     mutation addProduct($productName: String!, $category: String, $price: Int, $colors: [String!], $imgPath: String) {
-        addProduct(productName: $productName, category: $category, price: $price, colors: $colors, imgPath: $imgPath)
+        addProduct(productName: $productName, category: $category, price: $price, colors: $colors, imgPath: $imgPath){
+            productName
+            price
+            imgPath
+            colors
+            category
+          }
     }
 `;
 
-export const EDIT_PRODuCT = gql`
-    mutation editProduct($productName: String!, $category: String!, $price: Int!, $colors: [String!], $imgPath: String!) {
-        updateProduct(productName: $productName, category: $category, price: $price, colors: $colors, imgPath: $imgPath)
+export const EDIT_PRODUCT = gql`
+    mutation updateProduct($updateProductId: ID!, $productName: String!, $category: String!, $price: Int!, $colors: [String!], $imgPath: String!) {
+        updateProduct(id: $updateProductId, productName: $productName, category: $category, price: $price, colors: $colors, imgPath: $imgPath){
+            id
+            productName
+            price
+            imgPath
+            colors
+            category
+          }
     }
 `;
 

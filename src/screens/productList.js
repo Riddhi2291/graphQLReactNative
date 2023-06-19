@@ -25,12 +25,12 @@ function ProductList({navigation}) {
   }
 
   const onAdd = () => {
-    navigation.navigate('AddProduct')
+    navigation.navigate('AddProduct', {for: 'Add'})
   }
 
   const onItemPress = (item) =>{
     console.log('item.....', item)
-    navigation.navigate('ViewProduct', {data: item})
+    navigation.navigate('ViewProduct', {Id: item?.id})
   }
 
   return (

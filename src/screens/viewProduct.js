@@ -1,38 +1,42 @@
-import React from 'react';
-import {
-  Text,
-  View,
-  StyleSheet,
-  TouchableOpacity,
-} from 'react-native';
+import React, {useEffect} from 'react';
+import {Text, View, StyleSheet, TouchableOpacity} from 'react-native';
 import {useMutation, useQuery} from '@apollo/client';
-import {DELETE_PRODUCT, PRODUCT_QUERY} from '../server/query';
+import {DELETE_PRODUCT, VIEW_PRODUCT} from '../server/query';
+import {ObjectId} from 'bson';
 
 function ViewProduct({navigation, route}) {
-  const data = route?.params?.data;
+  const Id = route?.params?.Id;
 
-//   const deleteProduct = useMutation(DELETE_PRODUCT, { variables: { deleteProductId: data?.id }});
-  const [deleteProduct, { data: deletedData, loading, error }] = useMutation(DELETE_PRODUCT);
+  const [deleteProduct] = useMutation(DELETE_PRODUCT);
+  const {data, loading, error} = useQuery(VIEW_PRODUCT, {
+    variables: {getProductId: new ObjectId(Id)},
+  });
 
   const onDelete = () => {
-    deleteProduct({ variables: { deleteProductId: data?.id }}).then(() => {
-        navigation?.goBack()
-    })
-  }
+    deleteProduct({variables: {deleteProductId: Id}}).then(() => {
+      navigation?.goBack();
+    });
+  };
+
+  const onEdit = () => {
+    navigation.navigate('AddProduct', {Id: Id, for: 'Edit'})
+  };
 
   return (
     <View style={styles.container}>
       <View style={styles.productCard}>
         <View style={styles.row}>
-          <Text style={styles.productTitle}>{data?.productName}</Text>
-          <Text style={styles.price}>{`$${data?.price}`}</Text>
+          <Text style={styles.productTitle}>
+            {data?.getProduct?.productName}
+          </Text>
+          <Text style={styles.price}>{`$${data?.getProduct?.price}`}</Text>
         </View>
         <View style={styles.row}>
-          <Text style={styles.infoText}>{data?.category}</Text>
-          <Text style={styles.infoText}>{data?.colors[0]}</Text>
+          <Text style={styles.infoText}>{data?.getProduct?.category}</Text>
+          <Text style={styles.infoText}>{data?.getProduct?.colors[0]}</Text>
         </View>
         <View style={styles.btnContainer}>
-          <TouchableOpacity style={styles.btnEdit}>
+          <TouchableOpacity style={styles.btnEdit} onPress={onEdit}>
             <Text style={styles.btnText}>{'Edit'}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.btnDelete} onPress={onDelete}>
@@ -85,7 +89,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     width: '25%',
-    alignItems:'center',
+    alignItems: 'center',
     justifyContent: 'center',
   },
   btnDelete: {
@@ -93,20 +97,20 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     width: '25%',
-    alignItems:'center',
+    alignItems: 'center',
     justifyContent: 'center',
-    marginLeft: 15
+    marginLeft: 15,
   },
   btnText: {
     fontSize: 20,
     color: '#fff',
   },
-  btnContainer:{
+  btnContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 20,
-  }
+  },
 });
 
 export default ViewProduct;
